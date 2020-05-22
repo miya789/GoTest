@@ -2,7 +2,7 @@ package main
 
 import (
 	"GoTest/pkg/server"
-	"fmt"
+	"log"
 )
 
 func main() {
@@ -10,10 +10,10 @@ func main() {
 		Port: "8080",
 	}
 
-	s, err := server.New(&cnf)
+	svr, err := server.New(&cnf)
 	switch err.(type) {
 	case *server.InvalidConfig:
-		fmt.Errorf("server setup failed") // NEED TO BE FIXED
+		log.Print("server setup failed") // NEED TO BE FIXED
 	}
-	s.Start()
+	svr.Start()
 }
