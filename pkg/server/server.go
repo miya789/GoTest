@@ -29,21 +29,11 @@ func New(cnf *Config) (*Server, error) {
 
 	svr := new(Server)
 	// echo.New() initializes properly.
-	e := echo.New()
-
-	svr.e = setRoute(e)
+	svr.e = echo.New()
+	svr.e.GET("/", mainFunc)
 	svr.cnf = cnf
 
 	return svr, nil
-}
-
-func setRoute(e *echo.Echo) *echo.Echo {
-	e.GET("/", mainFunc)
-	return e
-}
-
-func (s *Server) listenAddr() string {
-	return fmt.Sprintf(":%v", s.cnf.Port)
 }
 
 func (s *Server) Start() error {
@@ -51,7 +41,7 @@ func (s *Server) Start() error {
 	// s.e.Use(middleware.Logger())
 
 	fmt.Printf("start listening server at %s\n", s.cnf.Port)
-	return s.e.Start(s.listenAddr())
+	return s.e.Start(fmt.Sprintf(":%v", s.cnf.Port))
 }
 
 func mainFunc(context echo.Context) error {
