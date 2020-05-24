@@ -192,6 +192,15 @@ func testError() {
 	}
 }
 
+func testWrap() {
+	err1 := errors.New("aaa")
+	newError := errors.New("new error")
+	fmt.Println(errors.Unwrap(err1))
+	fmt.Println(errors.Unwrap(newError)) // nil以外を返す事を期待したが無理
+	fmt.Println(errors.As(err1, &newError))
+	fmt.Println(errors.Is(err1, newError))
+}
+
 func testPointer() {
 	// Instance without pointer
 	var ptr MyCar
@@ -219,5 +228,6 @@ func main() {
 	// testJSON()
 	// testInterfaceClass()
 	testError()
+	testWrap()
 	testPointer()
 }
