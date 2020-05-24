@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -106,8 +107,22 @@ func testInterfaceClass() {
 	objCar.stop()
 }
 
+func testError() {
+	err := fmt.Errorf("%d: %s", 1, "some error")
+	println(err.Error())
+	var newError *json.InvalidUTF8Error // 適当なError
+
+	fmt.Println(errors.Unwrap(err))
+	fmt.Println(errors.Unwrap(newError)) // nil以外を返す事を期待したが無理
+
+	fmt.Println(errors.As(err, &newError))
+
+	fmt.Println(errors.Is(err, newError))
+}
+
 func main() {
-	testInterface()
-	testJSON()
-	testInterfaceClass()
+	// testInterface()
+	// testJSON()
+	// testInterfaceClass()
+	testError()
 }
