@@ -120,9 +120,32 @@ func testError() {
 	fmt.Println(errors.Is(err, newError))
 }
 
+func testPointer() {
+	// Instance without pointer
+	var ptr MyCar
+	fmt.Println(ptr)
+	fmt.Println(&ptr)
+
+	// Instance with null pointer
+	var ptr2 *MyCar
+	fmt.Println(ptr2)
+	fmt.Println(&ptr2)
+
+	// Empty instance with pointer
+	ptr3 := &MyCar{}
+	fmt.Println(ptr3)
+	fmt.Println(&ptr3)
+
+	// Not empty instance with pointer
+	ptr4 := &MyCar{name: "1"}
+	fmt.Println(ptr4)
+	fmt.Println(&ptr4)
+}
+
 func main() {
 	// testInterface()
 	// testJSON()
 	// testInterfaceClass()
 	testError()
+	testPointer()
 }
