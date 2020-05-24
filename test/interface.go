@@ -107,17 +107,89 @@ func testInterfaceClass() {
 	objCar.stop()
 }
 
+// InvalidTestError is the struct for test.
+type InvalidTestError struct {
+	name  string
+	count int
+}
+
+func (e *InvalidTestError) Error() string {
+	return fmt.Sprintf("%d: test sample of InvalidTestError", e.count)
+}
+
 func testError() {
-	err := fmt.Errorf("%d: %s", 1, "some error")
-	println(err.Error())
-	var newError *json.InvalidUTF8Error // 適当なError
+	// 1. errors.New(text string) error
+	err1 := errors.New("1: test sample of errors.New()")
+	{ // The difference of Println in built-in v.s. fmt
+		fmt.Println(err1)
+		fmt.Println(err1.Error())
+		println(err1) // it returns address like "(0x50c540,0xc000082240)".
+		println(err1.Error())
+	}
+	// 2. fmt.Errorf(fromat string, a ...interface{}) error
+	//   予め定義したerrorで処理の分岐ができれば十分な場合用
+	//   状態が持てないのが微妙そう
+	//   (pkgとして取り出して使えるかは微妙？)
+	err2 := fmt.Errorf("%d: %s", 2, "test sample of fmt.Errorf")
+	{ // The difference of Println in built-in v.s. fmt
+		fmt.Println(err2)
+		fmt.Println(err2.Error())
+		println(err2) // it returns address like "(0x50c540,0xc000082260)".
+		println(err2.Error())
+	}
+	// 3. interface
+	err3 := InvalidTestError{count: 3}
+	{ // The difference of Println in built-in v.s. fmt
+		fmt.Println(err3)
+		fmt.Println(&err3) // it returns "{ 3}"
+		fmt.Println(err3.Error())
+		// println(err3) // syntax error
+		println(err3.Error())
+	}
+	err4 := &InvalidTestError{count: 4}
+	{ // The difference of Println in built-in v.s. fmt
+		fmt.Println(err4)
+		fmt.Println(err4.Error())
+		println(err4) // it returns address.
+		println(err4.Error())
+	}
 
-	fmt.Println(errors.Unwrap(err))
-	fmt.Println(errors.Unwrap(newError)) // nil以外を返す事を期待したが無理
+	var newErrorInterface interface{}
+	invalidTestError := &InvalidTestError{name: "test"} // 適当なError
+	newErrorInterface = invalidTestError
 
-	fmt.Println(errors.As(err, &newError))
+	{ // Check by type assertion
+		r1, ok1 := err1.(error)
+		fmt.Println(r1, ok1)
+		r2, ok2 := err2.(error)
+		fmt.Println(r2, ok2)
+		// r3, ok3 := err3.(error)
+		// fmt.Println(r3, ok3)
+		// r4, ok4 := err4.(error)
+		// fmt.Println(r4, ok4)
 
-	fmt.Println(errors.Is(err, newError))
+		if v, ok := newErrorInterface.(json.InvalidUnmarshalError); !ok || ok {
+			fmt.Println(v, ok)
+		}
+		if v, ok := newErrorInterface.(*json.InvalidUnmarshalError); !ok || ok {
+			fmt.Println(v, ok)
+		}
+		if v, ok := newErrorInterface.(InvalidTestError); !ok || ok {
+			fmt.Println(v, ok)
+		}
+		if v, ok := newErrorInterface.(*InvalidTestError); !ok || ok {
+			println(v, ok)
+			fmt.Println(v, ok)
+		}
+	}
+
+	{ // Print types
+		fmt.Println(reflect.ValueOf(err1).Type())
+		fmt.Println(reflect.ValueOf(invalidTestError).Type())
+		fmt.Println(reflect.TypeOf(invalidTestError))
+		fmt.Println(reflect.ValueOf(newErrorInterface).Type()) // interfaceとはバラさない
+		fmt.Println(reflect.TypeOf(newErrorInterface))         // interfaceとはバラさない
+	}
 }
 
 func testPointer() {
