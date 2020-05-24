@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"reflect"
+	"strconv"
 )
 
 func testInterface() {
@@ -68,7 +70,44 @@ func testJSON() {
 	}
 }
 
+type Car interface {
+	run(int) string
+	stop()
+}
+
+type MyCar struct {
+	name  string
+	speed int
+}
+
+func (u *MyCar) run(speed int) string {
+	u.speed = speed
+	return strconv.Itoa(speed) + "kmで走ります"
+}
+
+func (u *MyCar) stop() {
+	fmt.Println("停止します")
+	u.speed = 0
+}
+
+func testInterfaceClass() {
+	myCar := &MyCar{
+		name:  "aaa",
+		speed: 101,
+	}
+
+	// var objCar Car = myCar
+	objCar := myCar
+	fmt.Printf("%T\n", objCar)
+	fmt.Println(reflect.TypeOf(new(Car)))
+	fmt.Println(reflect.TypeOf(new(MyCar)))
+	fmt.Println(reflect.TypeOf(objCar))
+	fmt.Println(objCar.run(50))
+	objCar.stop()
+}
+
 func main() {
 	testInterface()
 	testJSON()
+	testInterfaceClass()
 }
