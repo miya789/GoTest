@@ -51,12 +51,14 @@ func wrappedError() error {
 
 }
 
+// wrapするには%w
 func TestIs() {
 	err := simpleError()
 	fmt.Printf("simpleError():\t %T\n", err)
 
 	err = wrappedError()
 	fmt.Printf("wrappedError():\t %T\n", err)
+	// switchでは捉えられない
 	if err != nil {
 		switch err {
 		case MyError:
@@ -66,6 +68,8 @@ func TestIs() {
 		}
 	}
 
+	// errors.Is()では捉えられる
+	fmt.Printf("%T\n", err)
 	if errors.Is(err, MyError) {
 		fmt.Println("err")
 	}
