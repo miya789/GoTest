@@ -52,7 +52,11 @@ func wrappedError() error {
 }
 
 func TestIs() {
-	err := wrappedError()
+	err := simpleError()
+	fmt.Printf("simpleError():\t %T\n", err)
+
+	err = wrappedError()
+	fmt.Printf("wrappedError():\t %T\n", err)
 	if err != nil {
 		switch err {
 		case MyError:
